@@ -1,0 +1,23 @@
+{
+  "name": "iru",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mallikarjunkatta/iru.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mallikarjunkatta/iru/issues"
+  },
+  "homepage": "https://github.com/mallikarjunkatta/iru#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.6.1",
+    "dotenv": "18.0.1"
+  }
+}
