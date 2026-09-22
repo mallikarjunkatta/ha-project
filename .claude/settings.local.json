@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sS -o /dev/null -w \"HTTP %{http_code}, connect=%{time_connect}s, total=%{time_total}s\\\\n\" --max-time 15 https://www.zoominfo.com/)",
+      "Bash(cat /tmp/login-test-run.log 2>&1)",
+      "Read(//private/tmp/**)",
+      "Bash(rm -f /tmp/login-test-run.log)",
+      "Bash(TEST_USERNAME=dummyuser TEST_PASSWORD=dummypass npx playwright test tests/login.spec.ts --project=chromium --trace=on)",
+      "Bash(TEST_USERNAME=dummyuser TEST_PASSWORD=dummypass npx playwright test tests/login.spec.ts --project=chromium --headed --trace=on)",
+      "Bash(echo \"started bg pid $!\")",
+      "Bash(xattr -l ~/Library/Caches/ms-playwright/chromium-1091/chrome-mac/Chromium.app/Contents/MacOS/Chromium)",
+      "Bash(~/Library/Caches/ms-playwright/chromium-1091/chrome-mac/Chromium.app/Contents/MacOS/Chromium --version)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp"
+    ]
+  }
+}
