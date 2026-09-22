@@ -33,6 +33,8 @@ const getConfigValue = <T>(getter: () => T, defaultValue: T) : T => {
  */
 export default defineConfig({
   testDir: './tests',
+  /* Maximum time one test can run for. */
+  timeout: 30_000,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -42,7 +44,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['allure-playwright', { outputFolder: 'allure-results', suiteTitle: false, detail: true }],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -50,30 +55,30 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /* Capture a screenshot only when a test fails. */
+    screenshot: 'only-on-failure',
+
+    /* Record a video only for tests that fail. */
+    video: 'retain-on-failure',
+
+    /* Run headed/headless based on HEADLESS in the selected resources/.env.* file. */
+    headless: getConfigValue(() => config!.headless, true),
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], baseURL: getConfigValue(() => config!.baseUrl, '') },
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...devices['Desktop Firefox'], baseURL: getConfigValue(() => config!.baseUrl, '') },
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], baseURL: getConfigValue(() => config!.baseUrl, '') },
     },
-    {
-      name: 'iru-tests',
-      testMatch:[
-        '/tests/**.spec.ts'
-      ],
-      use: {
-        baseURL: getConfigValue(()=> config !.baseUrl, '')
-      },
-    }
   ],
 });

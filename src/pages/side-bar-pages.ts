@@ -1,32 +1,32 @@
+import { Locator, Page, test } from '@playwright/test';
+import { BasePage } from './base-page';
 
-import {Locator, Page} from '@playwright/test'
 /**
  * Contains locators and methods for Sidenav items
  */
-
-export class SideBarPage{
-    page: Page;
+export class SideBarPage extends BasePage {
     sideBarItems: Locator;
 
-
     constructor(page: Page) {
-        this.page = page;
-        this.sideBarItems = this.page.locator('.sidebar-items')
+        super(page);
+        this.sideBarItems = this.page.locator('.sidebar-items');
     }
-    
+
     /**
-     * 
-     * @param sideBarChoice 
-     * clicks saide bar item passed in as parameter. 
-     * 
+     *
+     * @param sideBarChoice
+     * clicks side bar item passed in as parameter.
+     *
      */
-    public async clickSideBarItems(sideBarChoice: string){
-        const ValidChoices = ['Devices', 'Blueprints', 'Library', 'Users'] // add all choices here in the same case as locator
-        if(!ValidChoices.includes(sideBarChoice)){
-            throw new Error(`Invalid Side bar choice - ${sideBarChoice}. Select from ${ValidChoices.join(',')}`)
+    public async clickSideBarItems(sideBarChoice: string) {
+        const ValidChoices = ['Devices', 'Blueprints', 'Library', 'Users']; // add all choices here in the same case as locator
+        if (!ValidChoices.includes(sideBarChoice)) {
+            throw new Error(`Invalid Side bar choice - ${sideBarChoice}. Select from ${ValidChoices.join(',')}`);
         }
-        await this.sideBarItems.filter({hasText: sideBarChoice}).click()
-
+        await test.step(`Click sidebar item "${sideBarChoice}"`, async () => {
+            // Exact match (not substring) so e.g. "Users" can't also match "Users Admin".
+            const item = this.sideBarItems.filter({ hasText: new RegExp(`^${sideBarChoice}$`) });
+            await item.click();
+        });
     }
-
 }

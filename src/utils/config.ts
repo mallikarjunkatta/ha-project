@@ -1,5 +1,5 @@
 import path from "path";
-import  * as dotEnv from 'dotEnv'
+import  * as dotenv from 'dotenv'
 import { ViewportSize } from "@playwright/test";
 
 interface EnvVars {
@@ -14,14 +14,20 @@ export class Config{
     private envVars: EnvVars;
 
     constructor() {
-        const env = process.env.TEST_ENV || 'LOCAL'; 
-        const envFileName = env === 'LOCAL' ? '. env.local' : env
+        const envFileMap: Record<string, string> = {
+            LOCAL: '.env.local',
+            STAGING: '.env.staging',
+            PROD: '.env.prod',
+            PRS: '.env.prs',
+        };
+        const envKey = (process.env.TEST_ENV || 'LOCAL').toUpperCase();
+        const envFileName = envFileMap[envKey] ?? '.env.local';
         const envFilePath = path.resolve(__dirname, '..', '..', 'resources', envFileName)
-        dotEnv.config({path: envFilePath});
+        dotenv.config({path: envFilePath});
 
         this.envVars = {
             HEADLESS: process.env.HEADLESS === 'false' ? false : true,
-            TEST_ENV: process.env.TEST_ENV || 'STAGING',
+            TEST_ENV: envKey,
             TEST_BROWSER_VIEWPORT: process.env.TEST_BROWSER_VIEWPORT || '{"width": 1920, "height":1080}',
             BASEURL: process.env.BASEURL || ''
         }
@@ -29,6 +35,9 @@ export class Config{
 
     get testEnv(): string {
         return this.envVars.TEST_ENV;
+    }
+    get headless(): boolean {
+        return this.envVars.HEADLESS;
     }
     get testBrowserViewPort(): ViewportSize {
         return JSON.parse(this.envVars.TEST_BROWSER_VIEWPORT)
