@@ -1,4 +1,23 @@
 import { defineConfig, devices } from '@playwright/test';
+import { Config } from './src/utils/config';
+import { Logger } from './src/utils/logger'
+
+
+let config: Config | null = null;
+try {
+  config = new Config()
+}catch(error) {
+  Logger.logging.warn("Nx Config inistialization failied", error)
+  config = null;
+}
+
+const getConfigValue = <T>(getter: () => T, defaultValue: T) : T => {
+  try {
+    return config ? getter() : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+}
 
 
 /**
@@ -39,12 +58,10 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
@@ -55,7 +72,8 @@ export default defineConfig({
         '/tests/**.spec.ts'
       ],
       use: {
-        baseURL: ''
-      }
+        baseURL: getConfigValue(()=> config !.baseUrl, '')
+      },
     }
+  ],
 });
